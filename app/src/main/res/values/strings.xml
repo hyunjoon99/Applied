@@ -9,4 +9,14 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Strings used for dialog_application_add.xml-->
+    <string name="ex_intern">ex. Intern</string>
+    <string name="ex_software_engineer">ex. Software Engineer</string>
+    <string name="company">Company</string>
+    <string name="seniority">Seniority</string>
+    <string name="position">Position</string>
+    <string name="ex_google">ex. Google</string>
+
+
 </resources>
