@@ -1,16 +1,18 @@
 package com.example.applied
 
-import android.content.DialogInterface
 import android.app.AlertDialog
-import android.content.Context
+import android.content.ContentValues
+import android.content.DialogInterface
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.applied.db.AppContract
+import com.example.applied.db.AppDBHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.dialog_application_add.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,30 +23,46 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        // initialize AppDBHelper
+        val mHelper = AppDBHelper(this)
 
         // add new application FAB onclick function
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+            // inflate layout
             val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
+            // grab values from EditText in layout
             val companyEditText = dialogView.findViewById<EditText>(R.id.editTextCompany)
             val positionEditText = dialogView.findViewById<EditText>(R.id.editTextPosition)
             val seniorityEditText = dialogView.findViewById<EditText>(R.id.editTextSeniority)
-
+            // create alert dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("Add New Application")
                 .setPositiveButton("Add", DialogInterface.OnClickListener { dialog, which ->
                     val company = companyEditText.text.toString()
-                    Log.i(TAG, "Company name to add: $company")
                     val position = positionEditText.text.toString()
-                    Log.i(TAG, "Position to add: $position")
                     val seniority = seniorityEditText.text.toString()
-                    Log.i(TAG, "Seniority status to add: $seniority")
-                })
+
+                    // store inputs in db
+                    val db: SQLiteDatabase = mHelper.writableDatabase
+                    val values = ContentValues().apply {
+                        put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
+                        put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
+                        put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
+                    }
+
+                    db.insertWithOnConflict(AppContract.AppEntry.TABLE,
+                        null,
+                        values,
+                        SQLiteDatabase.CONFLICT_REPLACE)
+                    db.close()
+                }) // end of setPositiveButton
                 .setNegativeButton("cancel", null)
                 .create()
 
             dialog.setView(dialogView)
             dialog.show()
         }
+
     } // end of onCreate
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
