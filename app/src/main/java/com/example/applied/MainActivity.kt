@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
-    private val mAppListView = findViewById<ListView>(R.id.list_applications)
+    private lateinit var mAppListView : ListView
     private var mAdapter : AppAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +28,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        // declare list view
+        mAppListView = findViewById<ListView>(R.id.list_applications)
+
         // initialize AppDBHelper
         val mHelper = AppDBHelper(this)
+
+        // display list
+        updateUI(mHelper)
 
         // add new application FAB onclick function
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
@@ -64,6 +70,9 @@ class MainActivity : AppCompatActivity() {
                         SQLiteDatabase.CONFLICT_REPLACE
                     )
                     db.close()
+
+                    // update ui
+                    updateUI(mHelper)
 
                     // show message that application was added
                     Snackbar.make(view, "Application Added", Snackbar.LENGTH_LONG)
