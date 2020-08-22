@@ -8,9 +8,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
+import android.view.View
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.applied.db.AppContract
 import com.example.applied.db.AppDBHelper
@@ -21,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var mAppListView : ListView
+    private lateinit var mHelper : AppDBHelper
     private var mAdapter : AppAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         mAppListView = findViewById<ListView>(R.id.list_applications)
 
         // initialize AppDBHelper
-        val mHelper = AppDBHelper(this)
+        mHelper = AppDBHelper(this)
 
         // display list
-        updateUI(mHelper)
+        updateUI()
 
         // add new application FAB onclick function
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
@@ -72,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                     db.close()
 
                     // update ui
-                    updateUI(mHelper)
+                    updateUI()
 
                     // show message that application was added
                     Snackbar.make(view, "Application Added", Snackbar.LENGTH_LONG)
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     } // end of onCreate
 
-    private fun updateUI(mHelper: AppDBHelper) {
+    private fun updateUI() {
         // create appList ArrayList
         val appList : ArrayList<Application> = ArrayList()
 
@@ -117,13 +119,18 @@ class MainActivity : AppCompatActivity() {
             val seniority = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_SENIORITY)
             //Log.i(TAG, "Application Company: " + cursor.getString(idx))
             // db values -> Application object
-            val app = Application(cursor.getString(company), cursor.getString(position), cursor.getString(seniority))
+            val app = Application(
+                cursor.getString(company), cursor.getString(position), cursor.getString(
+                    seniority
+                )
+            )
             appList.add(app)
         }
 
         // Application object -> Application Adapter
         if (mAdapter == null) {
-            mAdapter = AppAdapter(this,
+            mAdapter = AppAdapter(
+                this,
                 appList
             )
             mAppListView.adapter = mAdapter
@@ -134,6 +141,28 @@ class MainActivity : AppCompatActivity() {
         }
         cursor.close()
         db.close()
+    }
+
+    fun deleteApplication(view: View) {
+        val parent = view.parent as View
+        val companyTextView : TextView = parent.findViewById(R.id.application_company)
+        val positionTextView : TextView = parent.findViewById(R.id.application_position)
+        val seniorityTextView : TextView = parent.findViewById(R.id.application_seniority)
+
+        val company : String = companyTextView.text as String
+        val position : String = positionTextView.text as String
+        val seniority : String = seniorityTextView.text as String
+
+        val db : SQLiteDatabase = mHelper.writableDatabase
+        db.delete(AppContract.AppEntry.TABLE,
+            AppContract.AppEntry.COL_APPLICATION_COMPANY + " =? AND " +
+                    AppContract.AppEntry.COL_APPLICATION_POSITION + " =? AND " +
+                    AppContract.AppEntry.COL_APPLICATION_SENIORITY + " =?",
+            arrayOf(company, position, seniority)
+        )
+        
+        db.close()
+        updateUI()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
