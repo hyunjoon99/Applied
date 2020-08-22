@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                     AppContract.AppEntry.COL_APPLICATION_SENIORITY + " =?",
             arrayOf(company, position, seniority)
         )
-        
+
         db.close()
         updateUI()
     }

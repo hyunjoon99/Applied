@@ -6,34 +6,40 @@
 
     <TextView
         android:id="@+id/application_company"
-        android:layout_width="wrap_content"
+        android:layout_width="151dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="-1dp"
-        android:layout_marginLeft="-1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
         android:text="@string/company"
         android:textSize="20sp" />
 
     <TextView
         android:id="@+id/application_position"
-        android:layout_width="wrap_content"
+        android:layout_width="321dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"
-        android:layout_toEndOf="@+id/application_company"
-        android:layout_toRightOf="@+id/application_company"
+        android:layout_below="@+id/application_seniority"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
         android:text="@string/position"
         android:textSize="20sp" />
 
     <TextView
         android:id="@+id/application_seniority"
-        android:layout_width="wrap_content"
+        android:layout_width="144dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"
-        android:layout_toEndOf="@+id/application_position"
-        android:layout_toRightOf="@+id/application_position"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toStartOf="@+id/application_delete"
+        android:layout_toLeftOf="@+id/application_delete"
+        android:layout_toEndOf="@+id/application_company"
+        android:layout_toRightOf="@+id/application_company"
         android:text="@string/seniority"
         android:textSize="20sp" />
 
@@ -43,6 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
         android:onClick="deleteApplication"
         android:text="Delete" />
 </RelativeLayout>
