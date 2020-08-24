@@ -163,6 +163,10 @@ class MainActivity : AppCompatActivity() {
 
         db.close()
         updateUI()
+
+        // show message that application was added
+        Snackbar.make(view, "Application Deleted", Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
