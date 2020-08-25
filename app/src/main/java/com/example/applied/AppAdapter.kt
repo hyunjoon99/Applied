@@ -36,6 +36,8 @@ class AppAdapter(private val context : Context,
         val positionTextView = rowView.findViewById<TextView>(R.id.application_position)
         // get seniority
         val seniorityTextView = rowView.findViewById<TextView>(R.id.application_seniority)
+        // get column id
+        val idTextView = rowView.findViewById<TextView>(R.id.col_id)
 
         // get application object from dataSource
         val application = getItem(position) as Application
@@ -44,6 +46,7 @@ class AppAdapter(private val context : Context,
         companyTextView.text = application.getCompany()
         positionTextView.text = application.getPosition()
         seniorityTextView.text = application.getSeniority()
+        idTextView.text = application.getID().toString()
 
         return rowView
     }

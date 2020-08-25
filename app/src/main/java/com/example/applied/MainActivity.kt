@@ -88,6 +88,10 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         } // end of FAB functionality
 
+        // open application with onclick
+        mAppListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedApp = mAdapter?.getItem(position)
+        }
     } // end of onCreate
 
     private fun updateUI() {
@@ -117,12 +121,12 @@ class MainActivity : AppCompatActivity() {
             val company = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_COMPANY)
             val position = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_POSITION)
             val seniority = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_SENIORITY)
-            //Log.i(TAG, "Application Company: " + cursor.getString(idx))
+            val id = cursor.getColumnIndex(AppContract.AppEntry.COL_ID)
+
             // db values -> Application object
             val app = Application(
-                cursor.getString(company), cursor.getString(position), cursor.getString(
-                    seniority
-                )
+                cursor.getString(company), cursor.getString(position), cursor.getString(seniority),
+                cursor.getInt(id)
             )
             appList.add(app)
         }
@@ -145,22 +149,28 @@ class MainActivity : AppCompatActivity() {
 
     fun deleteApplication(view: View) {
         val parent = view.parent as View
-        val companyTextView : TextView = parent.findViewById(R.id.application_company)
-        val positionTextView : TextView = parent.findViewById(R.id.application_position)
-        val seniorityTextView : TextView = parent.findViewById(R.id.application_seniority)
+        //val companyTextView : TextView = parent.findViewById(R.id.application_company)
+        //val positionTextView : TextView = parent.findViewById(R.id.application_position)
+        //val seniorityTextView : TextView = parent.findViewById(R.id.application_seniority)
+        val idTextView : TextView = parent.findViewById(R.id.col_id)
 
-        val company : String = companyTextView.text as String
-        val position : String = positionTextView.text as String
-        val seniority : String = seniorityTextView.text as String
+        //val company : String = companyTextView.text as String
+        //val position : String = positionTextView.text as String
+        //val seniority : String = seniorityTextView.text as String
+        val id : String = idTextView.text as String
 
         val db : SQLiteDatabase = mHelper.writableDatabase
+        /*
         db.delete(AppContract.AppEntry.TABLE,
             AppContract.AppEntry.COL_APPLICATION_COMPANY + " =? AND " +
                     AppContract.AppEntry.COL_APPLICATION_POSITION + " =? AND " +
                     AppContract.AppEntry.COL_APPLICATION_SENIORITY + " =?",
             arrayOf(company, position, seniority)
         )
-
+        */
+        db.delete(AppContract.AppEntry.TABLE,
+            AppContract.AppEntry.COL_ID + " =?",
+            arrayOf(id))
         db.close()
         updateUI()
 
