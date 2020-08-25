@@ -20,7 +20,7 @@ class AppAdapter(private val context : Context,
         return dataList.size
     }
 
-    override fun getItem(position : Int) : Any {
+    override fun getItem(position : Int) : Application {
         return dataList[position]
     }
 

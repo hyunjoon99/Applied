@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
-
+    <!--
     <Button
         android:id="@+id/application_delete"
         android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
         android:layout_marginRight="0dp"
         android:onClick="deleteApplication"
         android:text="Delete" />
-
+    -->
     <TextView
         android:id="@+id/application_company"
         android:layout_width="195dp"

@@ -90,8 +90,29 @@ class MainActivity : AppCompatActivity() {
 
         // open application with onclick
         mAppListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedApp = mAdapter?.getItem(position)
-        }
+            val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
+            val selectedApp : Application? = mAdapter?.getItem(position)
+            val dialog: AlertDialog = AlertDialog.Builder(this)
+                .setTitle("View Application")
+                .setPositiveButton("Save", DialogInterface.OnClickListener { dialog, which ->
+
+                })
+                .setNeutralButton("Delete", DialogInterface.OnClickListener {dialog, which ->
+                    val db : SQLiteDatabase = mHelper.writableDatabase
+                    val id = selectedApp?.getID().toString()
+                    db.delete(AppContract.AppEntry.TABLE,
+                        AppContract.AppEntry.COL_ID + " =?",
+                        arrayOf(id))
+                    db.close()
+                    updateUI()
+                })
+                .setNegativeButton("Close", null)
+                .create()
+
+            dialog.setView(dialogView)
+            dialog.show()
+        } // end of ListView item functionality
+
     } // end of onCreate
 
     private fun updateUI() {
@@ -177,10 +198,6 @@ class MainActivity : AppCompatActivity() {
         // show message that application was deleted
         Snackbar.make(view, "Application Deleted", Snackbar.LENGTH_LONG)
             .setAction("Action", null).show()
-    }
-
-    fun editApplication(view: View) {
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
