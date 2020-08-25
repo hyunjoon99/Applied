@@ -88,14 +88,37 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         } // end of FAB functionality
 
-        // open application with onclick
+        // open dialog with onclick to edit or delete
         mAppListView.setOnItemClickListener { _, _, position, _ ->
-            val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
+            // get selected application from arrayList
             val selectedApp : Application? = mAdapter?.getItem(position)
+
+            // get layout
+            val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
+            // grab values from EditText in layout
+            val companyEditText = dialogView.findViewById<EditText>(R.id.editTextCompany)
+            val positionEditText = dialogView.findViewById<EditText>(R.id.editTextPosition)
+            val seniorityEditText = dialogView.findViewById<EditText>(R.id.editTextSeniority)
+
+            companyEditText.setText(selectedApp?.getCompany())
+            positionEditText.setText(selectedApp?.getPosition())
+            seniorityEditText.setText(selectedApp?.getSeniority())
+
+            // open dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("View Application")
                 .setPositiveButton("Save", DialogInterface.OnClickListener { dialog, which ->
-
+                    val db : SQLiteDatabase = mHelper.writableDatabase
+                    val company : String = companyEditText.text.toString()
+                    val position : String = positionEditText.text.toString()
+                    val seniority : String = seniorityEditText.text.toString()
+                    val cv = ContentValues()
+                    cv.put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
+                    cv.put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
+                    cv.put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
+                    db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + selectedApp?.getID().toString(), null)
+                    db.close()
+                    updateUI()
                 })
                 .setNeutralButton("Delete", DialogInterface.OnClickListener {dialog, which ->
                     val db : SQLiteDatabase = mHelper.writableDatabase
@@ -115,6 +138,7 @@ class MainActivity : AppCompatActivity() {
 
     } // end of onCreate
 
+    // updates the UI and the ArrayList<Application> in mAdapter
     private fun updateUI() {
         // create appList ArrayList
         val appList : ArrayList<Application> = ArrayList()
