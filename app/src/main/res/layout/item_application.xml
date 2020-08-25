@@ -1,47 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical">
-
-    <TextView
-        android:id="@+id/application_company"
-        android:layout_width="151dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:text="@string/company"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/application_position"
-        android:layout_width="321dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/application_seniority"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="1dp"
-        android:text="@string/position"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/application_seniority"
-        android:layout_width="144dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toStartOf="@+id/application_delete"
-        android:layout_toLeftOf="@+id/application_delete"
-        android:layout_toEndOf="@+id/application_company"
-        android:layout_toRightOf="@+id/application_company"
-        android:text="@string/seniority"
-        android:textSize="20sp" />
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <Button
         android:id="@+id/application_delete"
@@ -53,4 +16,53 @@
         android:layout_marginRight="0dp"
         android:onClick="deleteApplication"
         android:text="Delete" />
+
+    <TextView
+        android:id="@+id/application_company"
+        android:layout_width="195dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginRight="200dp"
+        android:text="@string/ex_google"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/application_position"
+        android:layout_width="297dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/application_company"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="98dp"
+        android:text="@string/ex_software_engineer" />
+
+    <TextView
+        android:id="@+id/application_seniority"
+        android:layout_width="111dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="185dp"
+        android:layout_marginLeft="185dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginRight="99dp"
+        android:text="@string/ex_intern"
+        android:textStyle="bold" />
+
 </RelativeLayout>
