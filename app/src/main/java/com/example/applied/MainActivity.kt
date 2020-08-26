@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             // open dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("View Application")
-                .setPositiveButton("Save", DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton("Update", DialogInterface.OnClickListener { dialog, which ->
                     val db : SQLiteDatabase = mHelper.writableDatabase
                     val company : String = companyEditText.text.toString()
                     val position : String = positionEditText.text.toString()
@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                     cv.put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
+                    // update database
                     db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + selectedApp?.getID().toString(), null)
                     db.close()
                     updateUI()

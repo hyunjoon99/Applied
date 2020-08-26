@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/application_position"
-        android:layout_width="297dp"
+        android:layout_width="354dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/application_company"
         android:layout_alignParentStart="true"
@@ -44,13 +44,13 @@
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="98dp"
-        android:layout_marginRight="98dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginRight="41dp"
         android:text="@string/ex_software_engineer" />
 
     <TextView
         android:id="@+id/application_seniority"
-        android:layout_width="111dp"
+        android:layout_width="169dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -60,17 +60,27 @@
         android:layout_marginStart="185dp"
         android:layout_marginLeft="185dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="99dp"
-        android:layout_marginRight="99dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginRight="41dp"
         android:text="@string/ex_intern"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/col_id"
-        android:layout_width="wrap_content"
+        android:layout_width="46dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/application_position"
-        android:layout_marginTop="0dp"
-        android:text="col_id" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="349dp"
+        android:layout_marginLeft="349dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:text="col_id"
+        android:textSize="10sp"
+        android:visibility="invisible" />
 
 </RelativeLayout>
