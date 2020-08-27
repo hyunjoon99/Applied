@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +18,9 @@ import com.example.applied.db.AppContract
 import com.example.applied.db.AppDBHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,7 +43,9 @@ class MainActivity : AppCompatActivity() {
         // display list
         updateUI()
 
-        // add new application FAB onclick function
+        /*
+            Add a new application for the fab onclick function
+         */
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             // inflate layout
             val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
@@ -55,10 +61,14 @@ class MainActivity : AppCompatActivity() {
                     val company = companyEditText.text.toString()
                     val position = positionEditText.text.toString()
                     val seniority = seniorityEditText.text.toString()
+                    val sdf = SimpleDateFormat("dd/MM/yyyy")
+                    val currentDate = sdf.format(Date())
+                    Log.i(TAG, "Current date: $currentDate")
 
                     // store inputs in ContentValues object
                     val db: SQLiteDatabase = mHelper.writableDatabase
                     val values = ContentValues().apply {
+                        put(AppContract.AppEntry.COL_DATE_ADDED, currentDate)
                         put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
                         put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
                         put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
@@ -88,7 +98,9 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         } // end of FAB functionality
 
-        // open dialog with onclick to edit or delete
+        /*
+            Open dialog for editing an application
+         */
         mAppListView.setOnItemClickListener { _, _, position, _ ->
             // get selected application from arrayList
             val selectedApp : Application? = mAdapter?.getItem(position)
@@ -139,7 +151,9 @@ class MainActivity : AppCompatActivity() {
 
     } // end of onCreate
 
-    // updates the UI and the ArrayList<Application> in mAdapter
+    /*
+        Updates the UI and the ArrayList<Application> in mAdapter
+     */
     private fun updateUI() {
         // create appList ArrayList
         val appList : ArrayList<Application> = ArrayList()
@@ -148,6 +162,7 @@ class MainActivity : AppCompatActivity() {
         val db : SQLiteDatabase = mHelper.readableDatabase
         val projection = arrayOf(
             AppContract.AppEntry.COL_ID,
+            AppContract.AppEntry.COL_DATE_ADDED,
             AppContract.AppEntry.COL_APPLICATION_COMPANY,
             AppContract.AppEntry.COL_APPLICATION_POSITION,
             AppContract.AppEntry.COL_APPLICATION_SENIORITY
@@ -168,10 +183,14 @@ class MainActivity : AppCompatActivity() {
             val position = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_POSITION)
             val seniority = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_SENIORITY)
             val id = cursor.getColumnIndex(AppContract.AppEntry.COL_ID)
+            val dateAdded = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_ADDED)
 
             // db values -> Application object
             val app = Application(
-                cursor.getString(company), cursor.getString(position), cursor.getString(seniority),
+                cursor.getString(dateAdded),
+                cursor.getString(company),
+                cursor.getString(position),
+                cursor.getString(seniority),
                 cursor.getInt(id)
             )
             appList.add(app)
@@ -193,6 +212,9 @@ class MainActivity : AppCompatActivity() {
         db.close()
     }
 
+    /*
+        Currently unused
+     */
     fun deleteApplication(view: View) {
         val parent = view.parent as View
         //val companyTextView : TextView = parent.findViewById(R.id.application_company)
@@ -225,12 +247,18 @@ class MainActivity : AppCompatActivity() {
             .setAction("Action", null).show()
     }
 
+    /*
+        Menu items
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     } // end of onCreateOptionsMenu
 
+    /*
+        Menu onclick functionality
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long

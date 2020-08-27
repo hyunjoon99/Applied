@@ -3,6 +3,7 @@ package com.example.applied.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.lang.Appendable
 
 // helper class to open database
 class AppDBHelper : SQLiteOpenHelper {
@@ -12,6 +13,7 @@ class AppDBHelper : SQLiteOpenHelper {
     override fun onCreate(db: SQLiteDatabase) {
         val createTable : String = "CREATE TABLE " + AppContract.AppEntry.TABLE + " ( " +
                 AppContract.AppEntry.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                AppContract.AppEntry.COL_DATE_ADDED + " TEXT NOT NULL, " +
                 AppContract.AppEntry.COL_APPLICATION_COMPANY + " TEXT NOT NULL, " +
                 AppContract.AppEntry.COL_APPLICATION_POSITION + " TEXT NOT NULL, " +
                 AppContract.AppEntry.COL_APPLICATION_SENIORITY + " TEXT NOT NULL);"

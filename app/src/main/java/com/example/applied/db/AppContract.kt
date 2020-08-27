@@ -21,6 +21,7 @@ class AppContract {
             const val COL_APPLICATION_COMPANY = "company"
             const val COL_APPLICATION_POSITION = "position"
             const val COL_APPLICATION_SENIORITY = "seniority"
+            const val COL_DATE_ADDED = "date_added"
         }
 
     }
