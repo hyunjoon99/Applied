@@ -1,11 +1,15 @@
 package com.example.applied
 
-class Application(dateAdded: String, company : String, position : String, seniority : String, id : Int) {
+class Application(dateAdded: String, dateInterview : String?, dateOffer : String?, dateReject : String?,
+                  company : String, position : String, seniority : String, id : Int) {
     private var COMPANY = company
     private var POSITION = position
     private var SENIORITY = seniority
     private var COL_ID = id
     private var COL_DATE_ADDED = dateAdded
+    private var COL_DATE_INTERVIEW = dateInterview
+    private var COL_DATE_OFFER = dateOffer
+    private var COL_DATE_REJECT = dateOffer
 
     fun getCompany() : String{
         return COMPANY
@@ -27,15 +31,15 @@ class Application(dateAdded: String, company : String, position : String, senior
         return COL_DATE_ADDED
     }
 
-    fun modifyCompany(newName : String) {
-        COMPANY = newName
+    fun getDateInterview() : String? {
+        return COL_DATE_INTERVIEW
     }
 
-    fun modifyPosition(newPosition : String) {
-        POSITION = newPosition
+    fun getDateOffer() : String? {
+        return COL_DATE_OFFER
     }
 
-    fun modifySeniority(newSeniority : String) {
-        SENIORITY = newSeniority
+    fun getDateReject() : String? {
+        return COL_DATE_REJECT
     }
 }

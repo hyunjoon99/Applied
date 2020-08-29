@@ -44,7 +44,8 @@ class MainActivity : AppCompatActivity() {
         updateUI()
 
         /*
-            Add a new application for the fab onclick function
+            fab onclick functionality
+            stores a new application row in database
          */
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             // inflate layout
@@ -61,14 +62,14 @@ class MainActivity : AppCompatActivity() {
                     val company = companyEditText.text.toString()
                     val position = positionEditText.text.toString()
                     val seniority = seniorityEditText.text.toString()
-                    val sdf = SimpleDateFormat("dd/MM/yyyy")
+                    val sdf = SimpleDateFormat("yyyy-mm-dd")
                     val currentDate = sdf.format(Date())
                     Log.i(TAG, "Current date: $currentDate")
 
                     // store inputs in ContentValues object
                     val db: SQLiteDatabase = mHelper.writableDatabase
                     val values = ContentValues().apply {
-                        put(AppContract.AppEntry.COL_DATE_ADDED, currentDate)
+                        put(AppContract.AppEntry.COL_DATE_APPLIED, currentDate)
                         put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
                         put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
                         put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
@@ -100,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
         /*
             Open dialog for editing an application
+            updates information in db with a SQLite UPDATE command,
+            or deletes with a SQLite DELETE command
          */
         mAppListView.setOnItemClickListener { _, _, position, _ ->
             // get selected application from arrayList
@@ -152,7 +155,8 @@ class MainActivity : AppCompatActivity() {
     } // end of onCreate
 
     /*
-        Updates the UI and the ArrayList<Application> in mAdapter
+        Updates the UI and the ArrayList<Application> in mAdapter;
+        creates Application objects for each row in SQLite db in order to display them,
      */
     private fun updateUI() {
         // create appList ArrayList
@@ -162,7 +166,10 @@ class MainActivity : AppCompatActivity() {
         val db : SQLiteDatabase = mHelper.readableDatabase
         val projection = arrayOf(
             AppContract.AppEntry.COL_ID,
-            AppContract.AppEntry.COL_DATE_ADDED,
+            AppContract.AppEntry.COL_DATE_APPLIED,
+            AppContract.AppEntry.COL_DATE_INTERVIEW,
+            AppContract.AppEntry.COL_DATE_OFFER,
+            AppContract.AppEntry.COL_DATE_REJECT,
             AppContract.AppEntry.COL_APPLICATION_COMPANY,
             AppContract.AppEntry.COL_APPLICATION_POSITION,
             AppContract.AppEntry.COL_APPLICATION_SENIORITY
@@ -183,11 +190,17 @@ class MainActivity : AppCompatActivity() {
             val position = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_POSITION)
             val seniority = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_SENIORITY)
             val id = cursor.getColumnIndex(AppContract.AppEntry.COL_ID)
-            val dateAdded = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_ADDED)
+            val dateAdded = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_APPLIED)
+            val dateInterview = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_INTERVIEW)
+            val dateOffer = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_OFFER)
+            val dateReject = cursor.getColumnIndex(AppContract.AppEntry.COL_DATE_REJECT)
 
             // db values -> Application object
             val app = Application(
                 cursor.getString(dateAdded),
+                cursor.getString(dateInterview),
+                cursor.getString(dateOffer),
+                cursor.getString(dateReject),
                 cursor.getString(company),
                 cursor.getString(position),
                 cursor.getString(seniority),

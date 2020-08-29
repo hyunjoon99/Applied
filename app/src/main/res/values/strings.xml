@@ -17,6 +17,10 @@
     <string name="seniority">Seniority</string>
     <string name="position">Position</string>
     <string name="ex_google">ex. Google</string>
+    <string name="Applied">Applied</string>
+    <string name="Interviews">Interviews</string>
+    <string name="Offered">Offer Recieved</string>
+    <string name="Rejected">Rejected :(</string>
 
 
 </resources>
