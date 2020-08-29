@@ -19,8 +19,12 @@
     <string name="ex_google">ex. Google</string>
     <string name="Applied">Applied</string>
     <string name="Interviews">Interviews</string>
-    <string name="Offered">Offer Recieved</string>
+    <string name="Offered">Offer Received</string>
     <string name="Rejected">Rejected :(</string>
+    <string name="date_applied">Date Applied</string>
+    <string name="interview_date">Date of Interview (if APL)</string>
+    <string name="offer_date">Date of Offer (if APL)</string>
+    <string name="rejection_date">Date of Rejection (if APL)</string>
 
 
 </resources>

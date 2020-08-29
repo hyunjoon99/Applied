@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAppListView : ListView
     private lateinit var mHelper : AppDBHelper
     private var mAdapter : AppAdapter? = null
+    private val sdf = SimpleDateFormat("yyyy-mm-dd")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                     val company = companyEditText.text.toString()
                     val position = positionEditText.text.toString()
                     val seniority = seniorityEditText.text.toString()
-                    val sdf = SimpleDateFormat("yyyy-mm-dd")
                     val currentDate = sdf.format(Date())
                     Log.i(TAG, "Current date: $currentDate")
 
@@ -107,37 +107,75 @@ class MainActivity : AppCompatActivity() {
         mAppListView.setOnItemClickListener { _, _, position, _ ->
             // get selected application from arrayList
             val selectedApp : Application? = mAdapter?.getItem(position)
-
             // get layout
-            val dialogView = layoutInflater.inflate(R.layout.dialog_application_add, null)
+            val dialogView = layoutInflater.inflate(R.layout.dialog_application_edit, null)
             // grab values from EditText in layout
-            val companyEditText = dialogView.findViewById<EditText>(R.id.editTextCompany)
-            val positionEditText = dialogView.findViewById<EditText>(R.id.editTextPosition)
-            val seniorityEditText = dialogView.findViewById<EditText>(R.id.editTextSeniority)
+            val companyEditText = dialogView.findViewById<EditText>(R.id.editTextAppCompany)
+            val positionEditText = dialogView.findViewById<EditText>(R.id.editTextAppPosition)
+            val seniorityEditText = dialogView.findViewById<EditText>(R.id.editTextAppSeniority)
+            val appliedEditText = dialogView.findViewById<EditText>(R.id.editTextAppliedDate)
+            val interviewEditText  = dialogView.findViewById<EditText>(R.id.editTextInterviewDate)
+            val offerEditText = dialogView.findViewById<EditText>(R.id.editTextOfferDate)
+            val rejectEditText = dialogView.findViewById<EditText>(R.id.editTextRejectDate)
 
+            // set the text in layout to information stored in application object
             companyEditText.setText(selectedApp?.getCompany())
             positionEditText.setText(selectedApp?.getPosition())
             seniorityEditText.setText(selectedApp?.getSeniority())
+            appliedEditText.setText(selectedApp?.getDateAdded())
+            interviewEditText.setText(selectedApp?.getDateInterview())
+            offerEditText.setText(selectedApp?.getDateOffer())
+            rejectEditText.setText(selectedApp?.getDateReject())
 
             // open dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("View Application")
                 .setPositiveButton("Update", DialogInterface.OnClickListener { dialog, which ->
+                    // get database
                     val db : SQLiteDatabase = mHelper.writableDatabase
+                    // store strings in ContentValues object
+                    val cv = ContentValues()
+                    // get strings in editText
                     val company : String = companyEditText.text.toString()
                     val position : String = positionEditText.text.toString()
                     val seniority : String = seniorityEditText.text.toString()
-                    val cv = ContentValues()
+                    // insert strings into ContentValues
                     cv.put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
-                    // update database
+                    // get dates from editText
+                    val dateApplied = try {sdf.parse(appliedEditText.text.toString())} catch (e: Throwable) {null}
+                    val dateInterview = try {sdf.parse(interviewEditText.text.toString())} catch (e: Throwable) {null}
+                    val dateOffer = try {sdf.parse(offerEditText.text.toString())} catch (e: Throwable) {null}
+                    val dateReject = try {sdf.parse(rejectEditText.text.toString())} catch (e: Throwable) {null}
+
+                    // insert dates into ContentValues
+                    if (dateApplied == null)
+                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, selectedApp?.getDateAdded())
+                    else
+                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, sdf.format(dateApplied))
+                    if (dateInterview == null)
+                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, selectedApp?.getDateInterview())
+                    else
+                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, sdf.format(dateInterview))
+                    if (dateOffer == null)
+                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, selectedApp?.getDateOffer())
+                    else
+                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, sdf.format(dateOffer))
+                    if (dateReject == null)
+                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, selectedApp?.getDateReject())
+                    else
+                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, sdf.format(dateReject))
+
+                    // update database with ContentValues
                     db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + selectedApp?.getID().toString(), null)
                     db.close()
                     updateUI()
                 })
                 .setNeutralButton("Delete", DialogInterface.OnClickListener {dialog, which ->
+                    // get database
                     val db : SQLiteDatabase = mHelper.writableDatabase
+                    // deleted based on row id
                     val id = selectedApp?.getID().toString()
                     db.delete(AppContract.AppEntry.TABLE,
                         AppContract.AppEntry.COL_ID + " =?",
