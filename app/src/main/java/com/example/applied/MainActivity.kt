@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAppListView : ListView
     private lateinit var mHelper : AppDBHelper
     private var mAdapter : AppAdapter? = null
-    private val sdf = SimpleDateFormat("yyyy-mm-dd")
+    private val sdf = SimpleDateFormat("yyyy-MM-dd")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

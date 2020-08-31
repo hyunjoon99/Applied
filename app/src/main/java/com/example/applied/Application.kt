@@ -9,7 +9,7 @@ class Application(dateAdded: String, dateInterview : String?, dateOffer : String
     private var COL_DATE_ADDED = dateAdded
     private var COL_DATE_INTERVIEW = dateInterview
     private var COL_DATE_OFFER = dateOffer
-    private var COL_DATE_REJECT = dateOffer
+    private var COL_DATE_REJECT = dateReject
 
     fun getCompany() : String{
         return COMPANY
