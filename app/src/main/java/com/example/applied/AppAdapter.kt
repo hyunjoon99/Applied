@@ -1,6 +1,7 @@
 package com.example.applied
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +47,7 @@ class AppAdapter(private val context : Context,
         val application = getItem(position) as Application
 
         // get the most recent status
-        val sdf = SimpleDateFormat("yyyy-mm-dd")
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
 
         var index = 1
         var recentDate = sdf.parse(application.getDateAdded())
@@ -65,6 +66,7 @@ class AppAdapter(private val context : Context,
                     if (formatted > recentDate) {
                         recentDate = formatted
                         recentIndex = index
+                        // if same date, so to a later progression
                     } else if (formatted == recentDate && index > recentIndex) {
                         recentIndex = index
                     }
@@ -73,13 +75,13 @@ class AppAdapter(private val context : Context,
             index += 1
         }
 
-
         // update view to display whats in application
         companyTextView.text = application.getCompany()
         positionTextView.text = application.getPosition()
         seniorityTextView.text = application.getSeniority()
         idTextView.text = application.getID().toString()
 
+        // update status to most recent status
         when (recentIndex) {
             0 -> statusTextView.text = context.getString(R.string.Applied)
             1 -> statusTextView.text = context.getString(R.string.Interviews)

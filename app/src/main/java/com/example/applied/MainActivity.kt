@@ -135,6 +135,7 @@ class MainActivity : AppCompatActivity() {
                     val db : SQLiteDatabase = mHelper.writableDatabase
                     // store strings in ContentValues object
                     val cv = ContentValues()
+
                     // get strings in editText
                     val company : String = companyEditText.text.toString()
                     val position : String = positionEditText.text.toString()
@@ -143,6 +144,7 @@ class MainActivity : AppCompatActivity() {
                     cv.put(AppContract.AppEntry.COL_APPLICATION_COMPANY, company)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_POSITION, position)
                     cv.put(AppContract.AppEntry.COL_APPLICATION_SENIORITY, seniority)
+
                     // get dates from editText
                     val dateApplied = try {sdf.parse(appliedEditText.text.toString())} catch (e: Throwable) {null}
                     val dateInterview = try {sdf.parse(interviewEditText.text.toString())} catch (e: Throwable) {null}
@@ -189,6 +191,11 @@ class MainActivity : AppCompatActivity() {
             dialog.setView(dialogView)
             dialog.show()
         } // end of ListView item functionality
+
+        /*
+            Hide/Reveal search bar based on scroll of listView
+         */
+        
 
     } // end of onCreate
 
