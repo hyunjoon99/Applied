@@ -5,93 +5,38 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.TextView
-import java.text.SimpleDateFormat
+import androidx.recyclerview.widget.RecyclerView
 
 /*
     ONLY WORKS WITH ITEM_APPLICATION LAYOUT AND WITH APPLICATION OBJECTS, NOTHING ELSE
 */
 class AppAdapter(private val context : Context,
-                 private val dataSource : ArrayList<Application>) : BaseAdapter() {
+                 private val dataSource : ArrayList<Application>) : RecyclerView.Adapter<AppAdapter.ViewHolder>() {
 
     private val inflater : LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     private var dataList = dataSource
+    var onItemClick: ((Application) -> Unit)? = null
 
-    override fun getCount() : Int {
-        return dataList.size
+    /*
+        Override functions
+     */
+    override fun onBindViewHolder(holder: AppAdapter.ViewHolder, position: Int) {
+        val application = dataList[position]
+        holder.bindApplication(application)
     }
 
-    override fun getItem(position : Int) : Application {
-        return dataList[position]
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppAdapter.ViewHolder {
+        val rowView = parent.inflate(R.layout.item_application, false)
+        return ViewHolder(rowView)
+    }
+
+    override fun getItemCount() : Int {
+        return dataList.size
     }
 
     override fun getItemId(position : Int) : Long {
         return position.toLong()
-    }
-
-    override fun getView(position : Int, convertView : View?, parent : ViewGroup) : View {
-        val rowView = inflater.inflate(R.layout.item_application, parent, false)
-        // get company name
-        val companyTextView = rowView.findViewById<TextView>(R.id.application_company)
-        // get position
-        val positionTextView = rowView.findViewById<TextView>(R.id.application_position)
-        // get seniority
-        val seniorityTextView = rowView.findViewById<TextView>(R.id.application_seniority)
-        // get column id
-        val idTextView = rowView.findViewById<TextView>(R.id.col_id)
-        // get date added
-        val statusTextView = rowView.findViewById<TextView>(R.id.status)
-
-        // get application object from dataSource
-        val application = getItem(position) as Application
-
-        // get the most recent status
-        val sdf = SimpleDateFormat("yyyy-MM-dd")
-
-        var index = 1
-        var recentDate = sdf.parse(application.getDateAdded())
-        var recentIndex = 0
-        var date : String?
-        while (index < 4) {
-            date = when (index) {
-                1 -> application.getDateInterview()
-                2 -> application.getDateOffer()
-                3 -> application.getDateReject()
-                else -> null
-            }
-            if (date != null) {
-                val formatted = sdf.parse(date)
-                if (formatted != null) {
-                    if (formatted > recentDate) {
-                        recentDate = formatted
-                        recentIndex = index
-                        // if same date, so to a later progression
-                    } else if (formatted == recentDate && index > recentIndex) {
-                        recentIndex = index
-                    }
-                }
-            }
-            index += 1
-        }
-
-        // update view to display whats in application
-        companyTextView.text = application.getCompany()
-        positionTextView.text = application.getPosition()
-        seniorityTextView.text = application.getSeniority()
-        idTextView.text = application.getID().toString()
-
-        // update status to most recent status
-        when (recentIndex) {
-            0 -> statusTextView.text = context.getString(R.string.Applied)
-            1 -> statusTextView.text = context.getString(R.string.Interviews)
-            2 -> statusTextView.text = context.getString(R.string.Offered)
-            3 -> statusTextView.text = context.getString(R.string.Rejected)
-            else -> statusTextView.text = context.getString(R.string.Applied)
-        }
-        //statusTextView.text = application.getDateAdded()
-
-        return rowView
     }
 
     fun clear() {
@@ -100,5 +45,52 @@ class AppAdapter(private val context : Context,
 
     fun addAll(newList : ArrayList<Application>) {
         dataList = ArrayList(newList)
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    View.OnClickListener {
+        //val application: TextView = itemView.
+        private var view: View = itemView
+        private var app : Application? = null
+
+        fun bindApplication(app : Application) {
+            this.app = app
+            // get TextViews from view
+            val companyTextView = view.findViewById<TextView>(R.id.application_company)
+            val positionTextView = view.findViewById<TextView>(R.id.application_position)
+            val seniorityTextView = view.findViewById<TextView>(R.id.application_seniority)
+            val idTextView = view.findViewById<TextView>(R.id.col_id)
+            val statusTextView = view.findViewById<TextView>(R.id.status)
+
+            // get the most recent status date
+            val recentIndex = app.getRecentDate()
+
+            // update TextViews to display whats in application
+            companyTextView.text = app.getCompany()
+            positionTextView.text = app.getPosition()
+            seniorityTextView.text = app.getSeniority()
+            idTextView.text = app.getID().toString()
+            statusTextView.text =  when(recentIndex) {
+                0 -> context.getString(R.string.Applied)
+                1 -> context.getString(R.string.Interviews)
+                2 -> context.getString(R.string.Offered)
+                3 -> context.getString(R.string.Rejected)
+                else -> context.getString(R.string.Applied)
+            }
+        } // end of bindApplication
+
+        init {
+            //itemView.setOnClickListener(this)
+            itemView.setOnClickListener {
+                onItemClick?.invoke(dataList[adapterPosition])
+            }
+        }
+
+        override fun onClick(view: View) {
+            val string = app!!.getCompany()
+            Log.d("AppAdapter", "OnClick Function: $string")
+
+        }
+
     }
 }

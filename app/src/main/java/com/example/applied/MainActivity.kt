@@ -9,11 +9,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.applied.db.AppContract
 import com.example.applied.db.AppDBHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,9 +24,13 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
-    private lateinit var mAppListView : ListView
+    // helper for database
     private lateinit var mHelper : AppDBHelper
+    // helpers for managing RecyclerView
+    private lateinit var mAppRecyclerView : RecyclerView
+    private lateinit var linearLayoutManager : LinearLayoutManager
     private var mAdapter : AppAdapter? = null
+    // date format
     private val sdf = SimpleDateFormat("yyyy-MM-dd")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,13 +38,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        // declare list view
-        mAppListView = findViewById<ListView>(R.id.list_applications)
+        // set layout manager
+        linearLayoutManager = LinearLayoutManager(this)
+
+        // declare RecyclerView and set layout manager
+        mAppRecyclerView = findViewById(R.id.list_applications)
+        mAppRecyclerView.layoutManager = linearLayoutManager
 
         // initialize AppDBHelper
         mHelper = AppDBHelper(this)
 
-        // display list
+        // update list display
         updateUI()
 
         /*
@@ -104,9 +111,8 @@ class MainActivity : AppCompatActivity() {
             updates information in db with a SQLite UPDATE command,
             or deletes with a SQLite DELETE command
          */
-        mAppListView.setOnItemClickListener { _, _, position, _ ->
-            // get selected application from arrayList
-            val selectedApp : Application? = mAdapter?.getItem(position)
+        mAdapter!!.onItemClick = { application ->
+            Log.d(TAG, application.getCompany())
             // get layout
             val dialogView = layoutInflater.inflate(R.layout.dialog_application_edit, null)
             // grab values from EditText in layout
@@ -119,13 +125,13 @@ class MainActivity : AppCompatActivity() {
             val rejectEditText = dialogView.findViewById<EditText>(R.id.editTextRejectDate)
 
             // set the text in layout to information stored in application object
-            companyEditText.setText(selectedApp?.getCompany())
-            positionEditText.setText(selectedApp?.getPosition())
-            seniorityEditText.setText(selectedApp?.getSeniority())
-            appliedEditText.setText(selectedApp?.getDateAdded())
-            interviewEditText.setText(selectedApp?.getDateInterview())
-            offerEditText.setText(selectedApp?.getDateOffer())
-            rejectEditText.setText(selectedApp?.getDateReject())
+            companyEditText.setText(application?.getCompany())
+            positionEditText.setText(application?.getPosition())
+            seniorityEditText.setText(application?.getSeniority())
+            appliedEditText.setText(application?.getDateAdded())
+            interviewEditText.setText(application?.getDateInterview())
+            offerEditText.setText(application?.getDateOffer())
+            rejectEditText.setText(application?.getDateReject())
 
             // open dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
@@ -153,50 +159,50 @@ class MainActivity : AppCompatActivity() {
 
                     // insert dates into ContentValues
                     if (dateApplied == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, selectedApp?.getDateAdded())
+                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, application?.getDateAdded())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_APPLIED, sdf.format(dateApplied))
                     if (dateInterview == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, selectedApp?.getDateInterview())
+                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, application?.getDateInterview())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, sdf.format(dateInterview))
                     if (dateOffer == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, selectedApp?.getDateOffer())
+                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, application?.getDateOffer())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_OFFER, sdf.format(dateOffer))
                     if (dateReject == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, selectedApp?.getDateReject())
+                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, application?.getDateReject())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_REJECT, sdf.format(dateReject))
 
                     // update database with ContentValues
-                    db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + selectedApp?.getID().toString(), null)
+                    db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + application?.getID().toString(), null)
                     db.close()
                     updateUI()
+                    // show message that application was updated
+                    Snackbar.make(mAppRecyclerView, "Application Updated", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
                 })
                 .setNeutralButton("Delete", DialogInterface.OnClickListener {dialog, which ->
                     // get database
                     val db : SQLiteDatabase = mHelper.writableDatabase
                     // deleted based on row id
-                    val id = selectedApp?.getID().toString()
+                    val id = application?.getID().toString()
                     db.delete(AppContract.AppEntry.TABLE,
                         AppContract.AppEntry.COL_ID + " =?",
                         arrayOf(id))
                     db.close()
                     updateUI()
+                    // show message that application was deleted
+                    Snackbar.make(mAppRecyclerView, "Application Deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
                 })
                 .setNegativeButton("Close", null)
                 .create()
 
             dialog.setView(dialogView)
             dialog.show()
-        } // end of ListView item functionality
-
-        /*
-            Hide/Reveal search bar based on scroll of listView
-         */
-        
-
+        }
     } // end of onCreate
 
     /*
@@ -219,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             AppContract.AppEntry.COL_APPLICATION_POSITION,
             AppContract.AppEntry.COL_APPLICATION_SENIORITY
         )
-
+        // create cursor to parse through db
         val cursor : Cursor = db.query(
             AppContract.AppEntry.TABLE, // Table to query
             projection,
@@ -229,7 +235,7 @@ class MainActivity : AppCompatActivity() {
             null,
             null
         )
-
+        // parse through db with cursor, adding to list
         while(cursor.moveToNext()) {
             val company = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_COMPANY)
             val position = cursor.getColumnIndex(AppContract.AppEntry.COL_APPLICATION_POSITION)
@@ -251,16 +257,14 @@ class MainActivity : AppCompatActivity() {
                 cursor.getString(seniority),
                 cursor.getInt(id)
             )
+            // add Application object to List<Application>
             appList.add(app)
         }
 
-        // Application object -> Application Adapter
+        // Attach adapter to ListView
         if (mAdapter == null) {
-            mAdapter = AppAdapter(
-                this,
-                appList
-            )
-            mAppListView.adapter = mAdapter
+            mAdapter = AppAdapter(this, appList)
+            mAppRecyclerView.adapter = mAdapter
         } else {
             mAdapter!!.clear()
             mAdapter!!.addAll(appList)
@@ -271,56 +275,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*
-        Currently unused
-     */
-    fun deleteApplication(view: View) {
-        val parent = view.parent as View
-        //val companyTextView : TextView = parent.findViewById(R.id.application_company)
-        //val positionTextView : TextView = parent.findViewById(R.id.application_position)
-        //val seniorityTextView : TextView = parent.findViewById(R.id.application_seniority)
-        val idTextView : TextView = parent.findViewById(R.id.col_id)
-
-        //val company : String = companyTextView.text as String
-        //val position : String = positionTextView.text as String
-        //val seniority : String = seniorityTextView.text as String
-        val id : String = idTextView.text as String
-
-        val db : SQLiteDatabase = mHelper.writableDatabase
-        /*
-        db.delete(AppContract.AppEntry.TABLE,
-            AppContract.AppEntry.COL_APPLICATION_COMPANY + " =? AND " +
-                    AppContract.AppEntry.COL_APPLICATION_POSITION + " =? AND " +
-                    AppContract.AppEntry.COL_APPLICATION_SENIORITY + " =?",
-            arrayOf(company, position, seniority)
-        )
-        */
-        db.delete(AppContract.AppEntry.TABLE,
-            AppContract.AppEntry.COL_ID + " =?",
-            arrayOf(id))
-        db.close()
-        updateUI()
-
-        // show message that application was deleted
-        Snackbar.make(view, "Application Deleted", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show()
-    }
-
-    /*
-        Menu items
+        Inflate the menu; this adds items to the action bar if it is present.
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     } // end of onCreateOptionsMenu
 
     /*
-        Menu onclick functionality
+        Handle action bar item clicks here. The action bar will
+        automatically handle clicks on the Home/Up button, so long
+        as you specify a parent activity in AndroidManifest.xml.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
