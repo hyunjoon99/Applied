@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             // create alert dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("Add New Application")
-                .setPositiveButton("Add", DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton("Add", DialogInterface.OnClickListener { _, _ ->
                     val company = companyEditText.text.toString()
                     val position = positionEditText.text.toString()
                     val seniority = seniorityEditText.text.toString()
@@ -126,18 +126,18 @@ class MainActivity : AppCompatActivity() {
             val rejectEditText = dialogView.findViewById<EditText>(R.id.editTextRejectDate)
 
             // set the text in layout to information stored in application object
-            companyEditText.setText(application?.getCompany())
-            positionEditText.setText(application?.getPosition())
-            seniorityEditText.setText(application?.getSeniority())
-            appliedEditText.setText(application?.getDateAdded())
-            interviewEditText.setText(application?.getDateInterview())
-            offerEditText.setText(application?.getDateOffer())
-            rejectEditText.setText(application?.getDateReject())
+            companyEditText.setText(application.getCompany())
+            positionEditText.setText(application.getPosition())
+            seniorityEditText.setText(application.getSeniority())
+            appliedEditText.setText(application.getDateAdded())
+            interviewEditText.setText(application.getDateInterview())
+            offerEditText.setText(application.getDateOffer())
+            rejectEditText.setText(application.getDateReject())
 
             // open dialog
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("View Application")
-                .setPositiveButton("Update", DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton("Update", DialogInterface.OnClickListener { _, _ ->
                     // get database
                     val db : SQLiteDatabase = mHelper.writableDatabase
                     // store strings in ContentValues object
@@ -160,35 +160,35 @@ class MainActivity : AppCompatActivity() {
 
                     // insert dates into ContentValues
                     if (dateApplied == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, application?.getDateAdded())
+                        cv.put(AppContract.AppEntry.COL_DATE_APPLIED, application.getDateAdded())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_APPLIED, sdf.format(dateApplied))
                     if (dateInterview == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, application?.getDateInterview())
+                        cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, application.getDateInterview())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_INTERVIEW, sdf.format(dateInterview))
                     if (dateOffer == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, application?.getDateOffer())
+                        cv.put(AppContract.AppEntry.COL_DATE_OFFER, application.getDateOffer())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_OFFER, sdf.format(dateOffer))
                     if (dateReject == null)
-                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, application?.getDateReject())
+                        cv.put(AppContract.AppEntry.COL_DATE_REJECT, application.getDateReject())
                     else
                         cv.put(AppContract.AppEntry.COL_DATE_REJECT, sdf.format(dateReject))
 
                     // update database with ContentValues
-                    db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + application?.getID().toString(), null)
+                    db.update(AppContract.AppEntry.TABLE, cv, AppContract.AppEntry.COL_ID + "=" + application.getID().toString(), null)
                     db.close()
                     updateUI()
                     // show message that application was updated
                     Snackbar.make(mAppRecyclerView, "Application Updated", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show()
                 })
-                .setNeutralButton("Delete", DialogInterface.OnClickListener {dialog, which ->
+                .setNeutralButton("Delete", DialogInterface.OnClickListener {_, _ ->
                     // get database
                     val db : SQLiteDatabase = mHelper.writableDatabase
                     // deleted based on row id
-                    val id = application?.getID().toString()
+                    val id = application.getID().toString()
                     db.delete(AppContract.AppEntry.TABLE,
                         AppContract.AppEntry.COL_ID + " =?",
                         arrayOf(id))

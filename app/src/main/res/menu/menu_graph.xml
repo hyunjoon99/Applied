@@ -1,16 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.applied.MainActivity">
+    tools:context="com.example.applied.GraphActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_settings" />
 
     <item
-        android:id="@+id/action_graphs"
+        android:id="@+id/action_applications"
         android:orderInCategory="100"
-        android:title="@string/graphs"
-        app:showAsAction="never" />
+        android:title="@string/applications" />
 </menu>
