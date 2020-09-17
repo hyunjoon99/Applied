@@ -3,6 +3,7 @@ package com.example.applied
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.DialogInterface
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
@@ -289,7 +290,14 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                true
+            }
+            R.id.action_graphs -> {
+                val intent = Intent(this, GraphActivity::class.java).apply{}
+                startActivity(intent)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     } // end of onOptionsItemSelected
